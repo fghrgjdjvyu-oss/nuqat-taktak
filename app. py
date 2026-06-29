@@ -1,0 +1,21 @@
+from flask import Flask, request, jsonify, render_template
+import os
+app = Flask(__name__, template_folder='templates')
+points_db = {}
+
+@app.route('/')
+def home(): 
+    return render_template('نقاط.html')
+
+@app.route('/claim_points', methods=['POST'])
+def claim_points():
+    data = request.get_json()
+    device_id = data.get('device_id')
+    if device_id in points_db: 
+        return jsonify({'status': 'error', 'msg': 'انت اخذت النقاط من قبل'})
+    points_db[device_id] = 100
+    return jsonify({'status': 'ok', 'points': 100})
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
